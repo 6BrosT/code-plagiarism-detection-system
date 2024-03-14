@@ -121,8 +121,6 @@ const postReportController = async (req) => {
       });
     }
 
-    console.log(labelsWithSubmissionsCount);
-
     const maxHighSimilarity = Math.max(
       ...newPairs.map((pair) => pair.highestSimilarity)
     );
