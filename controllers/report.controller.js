@@ -1,35 +1,27 @@
-import express from "express";
 import { Dolos } from "@dodona/dolos-lib";
 import { writeFile } from "fs/promises";
 import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 
-const router = express.Router();
-
-router.post("/", async function (req, res) {
+const postReportController = async (req) => {
   const generatePlagiarismDetectionUUID = uuidv4();
 
   try {
     // create a directory to save the code submissions
+    if (!fs.existsSync(`code_submission_save_files`)) {
+      fs.mkdirSync(`code_submission_save_files`);
+    }
     if (
       !fs.existsSync(
-        `./code_submission_files/${generatePlagiarismDetectionUUID}`
+        `./code_submission_save_files/${generatePlagiarismDetectionUUID}`
       )
     ) {
       fs.mkdirSync(
-        `./code_submission_files/${generatePlagiarismDetectionUUID}`
+        `./code_submission_save_files/${generatePlagiarismDetectionUUID}`
       );
     }
-  } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: "Error creating directory to save code submissions",
-    });
-  }
 
-  try {
     const codeSubmissions = req.body.code_submissions;
-
     const infoCsvContent = ["filename,student_id,question_id,created_at"];
     // save the code submissions to a file
     for (const submission of codeSubmissions) {
@@ -37,14 +29,14 @@ router.post("/", async function (req, res) {
       // convert created_at to a millisecond timestamp. 2023-07-23 17:12:33 +0200 -> 1679692353000
       const filename = `${submission.student_id}-${submission.question_id}-${createdAt}${submission.extension}`;
       await writeFile(
-        `./code_submission_files/${generatePlagiarismDetectionUUID}/${filename}`,
+        `./code_submission_save_files/${generatePlagiarismDetectionUUID}/${filename}`,
         submission.code_content
       );
       infoCsvContent.push(
         `${filename},${submission.student_id},${submission.question_id},${submission.created_at}`
       );
     }
-    const infoCsvPath = `./code_submission_files/${generatePlagiarismDetectionUUID}/info.csv`;
+    const infoCsvPath = `./code_submission_save_files/${generatePlagiarismDetectionUUID}/info.csv`;
     await writeFile(infoCsvPath, infoCsvContent.join("\n"));
 
     const testPath = "./samples/javascript/info.csv";
@@ -173,16 +165,18 @@ router.post("/", async function (req, res) {
       name: reportResult.name,
     };
 
-    res.status(200).json({
+    return {
+      statusCode: 200,
       status: "success",
       data: resultTemplate,
-    });
+    };
   } catch (error) {
-    res.status(500).json({
+    return {
+      statusCode: 500,
       status: "error",
-      message: "Error analyzing code submissions",
-    });
+      message: error.message,
+    };
   }
-});
+};
 
-export default router;
+export { postReportController };
