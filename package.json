@@ -1,0 +1,23 @@
+{
+  "type": "module",
+  "name": "code-plagiarism",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@dodona/dolos-lib": "^3.1.1",
+    "axios": "^1.6.2",
+    "axois": "^0.0.1-security",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "uuid": "^9.0.1"
+  },
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/app"
+  }
+}
