@@ -103,8 +103,60 @@ router.post("/", async function (req, res) {
 
     const newFiles = reportResult.files.map((file) => {
       const tempFile = file.file;
-      return tempFile;
+      return {
+        ...tempFile,
+        highestSimilarity: 0,
+      };
     });
+
+    const labelUnique = new Set();
+    for (const pair of newPairs) {
+      labelUnique.add(pair.leftFile.extra.labels);
+      labelUnique.add(pair.rightFile.extra.labels);
+    }
+
+    // Get submissions with labels
+    const labelsWithSubmissionsCount = [];
+
+    for (const label of labelUnique) {
+      const submissions = newFiles.filter(
+        (file) => file.extra.labels === label
+      ).length;
+      labelsWithSubmissionsCount.push({
+        label: label,
+        submissions: submissions,
+      });
+    }
+
+    const maxHighSimilarity = Math.max(
+      ...newPairs.map((pair) => pair.highestSimilarity)
+    );
+
+    const averageHighSimilarity = newPairs.reduce(
+      (acc, pair) => acc + pair.highestSimilarity,
+      0
+    )
+      ? newPairs.reduce((acc, pair) => acc + pair.highestSimilarity, 0) /
+        newPairs.length
+      : 0;
+
+    const medianHighSimilarity = newPairs.sort(
+      (a, b) => a.highestSimilarity - b.highestSimilarity
+    )[Math.floor(newPairs.length / 2)].highestSimilarity;
+
+    // Calculate the highest similarity for each file based on the pairs
+    for (const pair of newPairs) {
+      const leftFile = newFiles.find((file) => file.id === pair.leftFile.id);
+      const rightFile = newFiles.find((file) => file.id === pair.rightFile.id);
+
+      if (leftFile.highestSimilarity < pair.highestSimilarity) {
+        leftFile.highestSimilarity = pair.highestSimilarity;
+      }
+
+      if (rightFile.highestSimilarity < pair.highestSimilarity) {
+        rightFile.highestSimilarity = pair.highestSimilarity;
+      }
+    }
 
     const resultTemplate = {
       language: {
@@ -113,6 +165,10 @@ router.post("/", async function (req, res) {
       },
       files: newFiles,
       pairs: newPairs,
+      maxHighSimilarity: maxHighSimilarity,
+      averageHighSimilarity: averageHighSimilarity,
+      medianHighSimilarity: medianHighSimilarity,
+      labels: labelsWithSubmissionsCount,
       createdAt: reportResult.createdAt,
       name: reportResult.name,
     };
