@@ -44,8 +44,8 @@ const postReportController = async (req) => {
     const dolos = new Dolos();
     const reportResult = await dolos.analyzePaths([
       // if you want to test the code in samples, uncomment the line below and comment the line above
-      testPath,
-      // infoCsvPath,
+      // testPath,
+      infoCsvPath,
     ]);
 
     // build fragments for each pair
