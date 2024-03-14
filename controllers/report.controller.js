@@ -111,6 +111,7 @@ const postReportController = async (req) => {
     const labelsWithSubmissionsCount = [];
 
     for (const label of labelUnique) {
+      if (label === undefined) continue;
       const submissions = newFiles.filter(
         (file) => file.extra.labels === label
       ).length;
@@ -119,6 +120,8 @@ const postReportController = async (req) => {
         submissions: submissions,
       });
     }
+
+    console.log(labelsWithSubmissionsCount);
 
     const maxHighSimilarity = Math.max(
       ...newPairs.map((pair) => pair.highestSimilarity)
