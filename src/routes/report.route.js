@@ -52,17 +52,19 @@ router.post("/", async function (req, res) {
     const dolos = new Dolos();
     const reportResult = await dolos.analyzePaths([
       // if you want to test the code in samples, uncomment the line below and comment the line above
-      // testPath,
-      infoCsvPath,
+      testPath,
+      // infoCsvPath,
     ]);
 
     // build fragments for each pair
     const newPairs = [];
     for (const pair of reportResult.allPairs()) {
+      const newLeftFile = pair.leftFile.file;
+      const newRightFile = pair.rightFile.file;
       let newPair = {
         id: pair.id,
-        leftFile: pair.leftFile,
-        rightFile: pair.rightFile,
+        leftFile: newLeftFile,
+        rightFile: newRightFile,
         leftCovered: pair.leftCovered,
         rightCovered: pair.rightCovered,
         leftTotal: pair.leftTotal,
@@ -99,11 +101,17 @@ router.post("/", async function (req, res) {
       newPairs.push(newPair);
     }
 
+    const newFiles = reportResult.files.map((file) => {
+      const tempFile = file.file;
+      return tempFile;
+    });
+
     const resultTemplate = {
       language: {
         name: reportResult.language.name,
         extensions: reportResult.language.extensions,
       },
+      files: newFiles,
       pairs: newPairs,
       createdAt: reportResult.createdAt,
       name: reportResult.name,
