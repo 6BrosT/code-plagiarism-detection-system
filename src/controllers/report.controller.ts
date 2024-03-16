@@ -1,5 +1,4 @@
 import { Dolos } from '@dodona/dolos-lib';
-import { writeFile } from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 
@@ -28,7 +27,7 @@ const createReportController = async (req: any) => {
       const createdAt = new Date(submission.created_at).getTime();
       // convert created_at to a millisecond timestamp. 2023-07-23 17:12:33 +0200 -> 1679692353000
       const filename = `${submission.student_id}-${submission.question_id}-${createdAt}${submission.extension}`;
-      await writeFile(
+      fs.writeFileSync(
         `./code_submission_save_files/${generatePlagiarismDetectionUUID}/${filename}`,
         submission.code_content,
       );
@@ -37,7 +36,7 @@ const createReportController = async (req: any) => {
       );
     }
     const infoCsvPath = `./code_submission_save_files/${generatePlagiarismDetectionUUID}/info.csv`;
-    await writeFile(infoCsvPath, infoCsvContent.join('\n'));
+    fs.writeFileSync(infoCsvPath, infoCsvContent.join('\n'));
 
     // const testPath = './samples/javascript/info.csv';
 
