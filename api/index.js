@@ -9,6 +9,12 @@ app.use(express.json());
 app.use(cors());
 dotenv.config();
 
+app.get("/", function (req, res) {
+  res.json({
+    message: "Code Plagiarism Detection API",
+  });
+});
+
 app.use("/api/reports", reportRouter);
 
 app.use(function (req, res) {
