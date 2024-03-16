@@ -18,6 +18,6 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --ignore 'code_submission_save_files/' app"
+    "dev": "nodemon --ignore 'code_submission_save_files/' api/index"
   }
 }
