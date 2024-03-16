@@ -3,7 +3,7 @@ import { writeFile } from "fs/promises";
 import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 
-const postReportController = async (req) => {
+const createReportController = async (req) => {
   const generatePlagiarismDetectionUUID = uuidv4();
 
   try {
@@ -44,8 +44,8 @@ const postReportController = async (req) => {
     const dolos = new Dolos();
     const reportResult = await dolos.analyzePaths([
       // if you want to test the code in samples, uncomment the line below and comment the line above
-      // testPath,
-      infoCsvPath,
+      testPath,
+      // infoCsvPath,
     ]);
 
     // build fragments for each pair
@@ -183,4 +183,4 @@ const postReportController = async (req) => {
   }
 };
 
-export { postReportController };
+export default createReportController;

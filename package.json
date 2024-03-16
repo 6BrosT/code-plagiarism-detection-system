@@ -10,7 +10,11 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "uuid": "^9.0.1"
+    "morgan": "^1.10.0",
+    "uuid": "^9.0.1",
+    "winston": "^3.12.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "winston-syslog": "^2.7.0"
   },
   "description": "",
   "devDependencies": {
@@ -18,7 +22,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --ignore 'code_submission_save_files/' api/index.js",
-    "server": "nodemon --ignore 'code_submission_save_files/' api/index.js"
+    "start": "node --ignore 'code_submission_save_files/' src/index.js",
+    "server": "nodemon --ignore 'code_submission_save_files/' src/index.js"
   }
 }

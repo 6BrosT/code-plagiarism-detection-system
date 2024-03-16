@@ -1,12 +1,14 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import morgan from "morgan";
 
-import reportRouter from "./routes/report.route.js";
+import { reportRouter } from "./routes/index.js";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(morgan("dev"));
 dotenv.config();
 
 app.get("/", function (req, res) {

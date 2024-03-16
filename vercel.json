@@ -1,21 +1,8 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "./index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api"
-    }
-  ]
+  "name": "code-plagiarism-backend",
+  "builds": [{ "src": "src/index.js", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "/src/index.js" }],
+  "buildCommand": "npm install -g phantomjs-prebuilt phantomjs && yarn build",
+  "installCommand": "yarn install"
 }
