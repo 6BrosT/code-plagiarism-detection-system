@@ -1,51 +1,54 @@
 import { Dolos } from '@dodona/dolos-lib';
-import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
+import readRemoteFileUrlToDolosFile from '../utils/readRemoteFileUrlToDolosFile';
 
 const createReportController = async (req: any) => {
-  const generatePlagiarismDetectionUUID = uuidv4();
-
   try {
-    // create a directory to save the code submissions
-    if (!fs.existsSync('code_submission_save_files')) {
-      fs.mkdirSync('code_submission_save_files');
-    }
+    // Check if the request body has the required fields
     if (
-      !fs.existsSync(
-        `./code_submission_save_files/${generatePlagiarismDetectionUUID}`,
-      )
+      !req.body.code_submissions_data ||
+      !req.body.language ||
+      !req.body.report_name
     ) {
-      fs.mkdirSync(
-        `./code_submission_save_files/${generatePlagiarismDetectionUUID}`,
-      );
+      return {
+        statusCode: 400,
+        status: 'error',
+        message: 'Missing required fields',
+      };
     }
 
-    const codeSubmissions = req.body.code_submissions;
-    const infoCsvContent = ['filename,student_id,question_id,created_at'];
-    // save the code submissions to a file
-    for (const submission of codeSubmissions) {
-      const createdAt = new Date(submission.created_at).getTime();
-      // convert created_at to a millisecond timestamp. 2023-07-23 17:12:33 +0200 -> 1679692353000
-      const filename = `${submission.student_id}-${submission.question_id}-${createdAt}${submission.extension}`;
-      fs.writeFileSync(
-        `./code_submission_save_files/${generatePlagiarismDetectionUUID}/${filename}`,
-        submission.code_content,
+    const codeSubmissions = req.body.code_submissions_data;
+    const language = req.body.language;
+    const reportName = req.body.report_name;
+
+    const dolos = new Dolos({ language: language, reportName: reportName });
+    const dolosFiles = [];
+  
+    for (let i = 0; i < codeSubmissions.length; i++) {
+      const extra = codeSubmissions[i].extra;
+      const filename = codeSubmissions[i].url.split('/').pop();
+
+      const file = await readRemoteFileUrlToDolosFile(
+        {
+          id: i,
+          url: codeSubmissions[i].url,
+          extra: {
+            filename: filename,
+            fullName: filename,
+            id: i.toString(),
+            status: '',
+            submissionID: '',
+            nameEN: '',
+            nameNL: '',
+            exerciseID: '',
+            createdAt: new Date(extra.created_at),
+            labels: extra.labels,
+          },
+        },
       );
-      infoCsvContent.push(
-        `${filename},${submission.student_id},${submission.question_id},${submission.created_at}`,
-      );
+      dolosFiles.push(file);
     }
-    const infoCsvPath = `./code_submission_save_files/${generatePlagiarismDetectionUUID}/info.csv`;
-    fs.writeFileSync(infoCsvPath, infoCsvContent.join('\n'));
 
-    // const testPath = './samples/javascript/info.csv';
-
-    const dolos = new Dolos();
-    const reportResult = await dolos.analyzePaths([
-      // if you want to test the code in samples, uncomment the line below and comment the line above
-      // testPath,
-      infoCsvPath,
-    ]);
+    const reportResult = await dolos.analyze(dolosFiles);
 
     // build fragments for each pair
     const newPairs = [];
