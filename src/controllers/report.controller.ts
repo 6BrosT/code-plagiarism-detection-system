@@ -6,7 +6,6 @@ const createReportController = async (req: any) => {
     // Check if the request body has the required fields
     if (
       !req.body.code_submissions_data ||
-      !req.body.language ||
       !req.body.report_name
     ) {
       return {
@@ -17,10 +16,9 @@ const createReportController = async (req: any) => {
     }
 
     const codeSubmissions = req.body.code_submissions_data;
-    const language = req.body.language;
     const reportName = req.body.report_name;
 
-    const dolos = new Dolos({ language: language, reportName: reportName });
+    const dolos = new Dolos({ reportName: reportName });
     const dolosFiles = [];
   
     for (let i = 0; i < codeSubmissions.length; i++) {
