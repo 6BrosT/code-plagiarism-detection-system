@@ -1,10 +1,13 @@
-import { Dolos } from "@dodona/dolos-lib";
-import readRemoteFileUrlToDolosFile from "../utils/readRemoteFileUrlToDolosFile.js";
+import { File, Dolos } from "@dodona/dolos-lib";
 
 const createReportController = async (req) => {
   try {
     // Check if the request body has the required fields
-    if (!req.body.code_submissions_data || !req.body.report_name) {
+    if (
+      !req.body.code_submissions_data ||
+      !req.body.report_name ||
+      !req.body.language
+    ) {
       return {
         statusCode: 400,
         status: "error",
@@ -14,30 +17,34 @@ const createReportController = async (req) => {
 
     const codeSubmissions = req.body.code_submissions_data;
     const reportName = req.body.report_name;
+    const language = req.body.language;
+    const questionName = req.body.question_name;
 
-    const dolos = new Dolos({ reportName: reportName });
+    const dolos = new Dolos({ reportName: reportName, language: language });
     const dolosFiles = [];
 
     for (let i = 0; i < codeSubmissions.length; i++) {
-      const extra = codeSubmissions[i].extra;
-      const filename = codeSubmissions[i].url.split("/").pop();
+      const createdAt = new Date(codeSubmissions[i].extra.created_at);
+      const filename = `${codeSubmissions[i].extra.student_id}-submission_id(${codeSubmissions[i].extra.submission_id})-${questionName}`;
 
-      const file = await readRemoteFileUrlToDolosFile({
-        id: i,
-        url: codeSubmissions[i].url,
-        extra: {
+      const file = new File(
+        filename,
+        codeSubmissions[i].content,
+        {
           filename: filename,
           fullName: filename,
           id: i.toString(),
           status: "",
-          submissionID: "",
+          submissionID: codeSubmissions[i].extra.submission_id,
           nameEN: "",
           nameNL: "",
           exerciseID: "",
-          createdAt: new Date(extra.created_at),
-          labels: extra.labels,
+          createdAt: createdAt,
+          labels: codeSubmissions[i].extra.labels,
         },
-      });
+        i
+      );
+
       dolosFiles.push(file);
     }
 
