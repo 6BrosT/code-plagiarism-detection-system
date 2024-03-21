@@ -1,4 +1,5 @@
 import { File, Dolos } from "@dodona/dolos-lib";
+import readContentFromUrl from "../utils/readContentFromUrl.js";
 
 const createReportController = async (req) => {
   try {
@@ -18,22 +19,26 @@ const createReportController = async (req) => {
     const codeSubmissions = req.body.code_submissions_data;
     const reportName = req.body.report_name;
     const language = req.body.language;
-    const questionName = req.body.question_name;
 
     const dolos = new Dolos({ reportName: reportName, language: language });
     const dolosFiles = [];
 
     for (let i = 0; i < codeSubmissions.length; i++) {
       const createdAt = new Date(codeSubmissions[i].extra.created_at);
-      const filename = `${codeSubmissions[i].extra.student_id}-submission_id(${codeSubmissions[i].extra.submission_id})-${questionName}`;
+      const filename = `${codeSubmissions[i].extra.student_id}`;
+      const content = await readContentFromUrl(codeSubmissions[i].url);
 
       const file = new File(
         filename,
-        codeSubmissions[i].content,
+        content,
         {
+          id: i,
+          questionId: codeSubmissions[i].extra.question_id,
+          questionName: codeSubmissions[i].extra.question_name,
+          studentId: codeSubmissions[i].extra.student_id, 
+          studentName: codeSubmissions[i].extra.student_name,
           filename: filename,
           fullName: filename,
-          id: i.toString(),
           status: "",
           submissionID: codeSubmissions[i].extra.submission_id,
           nameEN: "",
@@ -64,9 +69,9 @@ const createReportController = async (req) => {
         leftTotal: pair.leftTotal,
         rightTotal: pair.rightTotal,
         longestFragment: pair.longest,
-        highestSimilarity: pair.similarity,
+        similarity: pair.similarity,
         totalOverlap: pair.overlap,
-        buildFragments: [],
+        fragments: [],
       };
 
       const newBuildFragments = [];
@@ -85,80 +90,29 @@ const createReportController = async (req) => {
             startCol: right.startCol,
             endRow: right.endRow,
             endCol: right.endCol,
-          },
+          }
         };
 
         newBuildFragments.push(newFragment);
       }
 
-      newPair.buildFragments = newBuildFragments;
+      newPair.fragments = newBuildFragments;
       newPairs.push(newPair);
     }
 
+    const reportResultIndex = reportResult.index;
+    const kgramLength = reportResultIndex.kgramLength;
     const newFiles = reportResult.files.map((file) => {
       const tempFile = file.file;
+      const extra = tempFile.extra;
       return {
         ...tempFile,
-        highestSimilarity: 0,
+        amountOfKgrams: kgramLength,
+        extra: {
+          ...extra,
+        },
       };
     });
-
-    const labelUnique = new Set();
-    for (const pair of newPairs) {
-      if (pair.leftFile.extra) {
-        labelUnique.add(pair.leftFile.extra.labels);
-      }
-      if (pair.rightFile.extra) {
-        labelUnique.add(pair.rightFile.extra.labels);
-      }
-    }
-
-    // Get submissions with labels
-    const labelsWithSubmissionsCount = [];
-
-    for (const label of labelUnique) {
-      if (label === undefined) continue;
-      const submissions = newFiles.filter(
-        (file) => file.extra && file.extra.labels === label
-      ).length;
-      labelsWithSubmissionsCount.push({
-        label: label,
-        submissions: submissions,
-      });
-    }
-
-    const maxHighSimilarity = Math.max(
-      ...newPairs.map((pair) => pair.highestSimilarity)
-    );
-
-    const averageHighSimilarity = newPairs.reduce(
-      (acc, pair) => acc + pair.highestSimilarity,
-      0
-    )
-      ? newPairs.reduce((acc, pair) => acc + pair.highestSimilarity, 0) /
-        newPairs.length
-      : 0;
-
-    const medianHighSimilarity = newPairs.sort(
-      (a, b) => a.highestSimilarity - b.highestSimilarity
-    )[Math.floor(newPairs.length / 2)].highestSimilarity;
-
-    // Calculate the highest similarity for each file based on the pairs
-    for (const pair of newPairs) {
-      const leftFile = newFiles.find((file) => file.id === pair.leftFile.id);
-      const rightFile = newFiles.find((file) => file.id === pair.rightFile.id);
-
-      if (leftFile && leftFile.highestSimilarity < pair.highestSimilarity) {
-        leftFile.highestSimilarity = pair.highestSimilarity;
-      }
-
-      if (rightFile && rightFile.highestSimilarity < pair.highestSimilarity) {
-        rightFile.highestSimilarity = pair.highestSimilarity;
-      }
-    }
-
-    // Sort newPairs by highest similarity
-    newPairs.sort((a, b) => b.highestSimilarity - a.highestSimilarity);
 
     const resultTemplate = {
       language: {
@@ -167,10 +121,6 @@ const createReportController = async (req) => {
       },
       files: newFiles,
       pairs: newPairs,
-      maxHighSimilarity: maxHighSimilarity,
-      averageHighSimilarity: averageHighSimilarity,
-      medianHighSimilarity: medianHighSimilarity,
-      labels: labelsWithSubmissionsCount,
       createdAt: reportResult.createdAt,
       name: reportResult.name,
     };
