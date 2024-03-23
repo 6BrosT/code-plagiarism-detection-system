@@ -1,18 +1,18 @@
-import express from 'express';
+import express from "express";
 
-import emojis from './emojis.js';
-import routes from '../routes/index.js';
+// import emojis from "./emojis.js";
+import { dolosReportRouter } from "../routes/index.js";
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   res.json({
-    message: 'API - 👋🌎🌍🌏',
+    message: "API - 👋🌎🌍🌏",
   });
 });
 
-router.use('/emojis', emojis);
+// router.use('/emojis', emojis);
 
-router.use('/reports', routes.reportRouter);
+router.use("/reports", dolosReportRouter);
 
 export default router;

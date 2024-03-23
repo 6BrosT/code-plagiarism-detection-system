@@ -1,5 +1,3 @@
-import reportRouter from "./report.route.js";
+import dolosReportRouter from "./dolos_report.route.js";
 
-export default {
-  reportRouter,
-};
+export { dolosReportRouter };

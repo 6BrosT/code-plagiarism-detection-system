@@ -1,5 +1,3 @@
-import createReportController from './report.controller.js';
+import dolosReportController from "./dolos_report.controller.js";
 
-export default {
-  createReportController,
-};
+export { dolosReportController };
