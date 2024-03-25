@@ -3,13 +3,11 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 import dotenv from "dotenv";
-import path from "path";
 
 import middlewares from "./middlewares.js";
 import api from "./api/index.js";
 
-// config env path to ../.env
-dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+dotenv.config();
 
 const app = express();
 
