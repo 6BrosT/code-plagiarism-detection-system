@@ -39,7 +39,11 @@ await db.schema.hasTable("course").then((exists) => {
       table.dateTime("created_at").notNullable().defaultTo(db.fn.now());
       table.dateTime("updated_at").notNullable().defaultTo(db.fn.now());
       table.primary("id");
-      table.foreign("org_id").references("organization.id");
+      table
+        .foreign("org_id")
+        .references("organization.id")
+        .onUpdate("CASCADE") // If Article PK is changed, update FK as well.
+        .onDelete("CASCADE"); // If Article is deleted, delete Comment as well.
     });
   }
 });
@@ -55,8 +59,16 @@ await db.schema.hasTable("exam").then((exists) => {
       table.dateTime("created_at").notNullable().defaultTo(db.fn.now());
       table.dateTime("updated_at").notNullable().defaultTo(db.fn.now());
       table.primary("id");
-      table.foreign("course_id").references("course.id");
-      table.foreign("user_id").references("user.id");
+      table
+        .foreign("course_id")
+        .references("course.id")
+        .onUpdate("CASCADE") // If Article PK is changed, update FK as well.
+        .onDelete("CASCADE"); // If Article is deleted, delete Comment as well.
+      table
+        .foreign("user_id")
+        .references("user.id")
+        .onUpdate("CASCADE") // If Article PK is changed, update FK as well.
+        .onDelete("CASCADE"); // If Article is deleted, delete Comment as well.
     });
   }
 });
@@ -72,8 +84,16 @@ await db.schema.hasTable("code_question").then((exists) => {
       table.dateTime("created_at").notNullable().defaultTo(db.fn.now());
       table.dateTime("updated_at").notNullable().defaultTo(db.fn.now());
       table.primary("id");
-      table.foreign("exam_id").references("exam.id");
-      table.foreign("user_id").references("user.id");
+      table
+        .foreign("exam_id")
+        .references("exam.id")
+        .onUpdate("CASCADE") // If Article PK is changed, update FK as well.
+        .onDelete("CASCADE"); // If Article is deleted, delete Comment as well.
+      table
+        .foreign("user_id")
+        .references("user.id")
+        .onUpdate("CASCADE") // If Article PK is changed, update FK as well.
+        .onDelete("CASCADE"); // If Article is deleted, delete Comment as well.
     });
   }
 });
@@ -90,8 +110,16 @@ await db.schema.hasTable("code_submission").then((exists) => {
       table.dateTime("created_at").notNullable().defaultTo(db.fn.now());
       table.dateTime("updated_at").notNullable().defaultTo(db.fn.now());
       table.primary("id");
-      table.foreign("code_question_id").references("code_question.id");
-      table.foreign("user_id").references("user.id");
+      table
+        .foreign("code_question_id")
+        .references("code_question.id")
+        .onUpdate("CASCADE") // If Article PK is changed, update FK as well.
+        .onDelete("CASCADE"); // If Article is deleted, delete Comment as well.
+      table
+        .foreign("user_id")
+        .references("user.id")
+        .onUpdate("CASCADE") // If Article PK is changed, update FK as well.
+        .onDelete("CASCADE"); // If Article is deleted, delete Comment as well.
     });
   }
 });
@@ -110,7 +138,11 @@ await db.schema.hasTable("dolos_report").then((exists) => {
       table.dateTime("created_at").notNullable().defaultTo(db.fn.now());
       table.dateTime("updated_at").notNullable().defaultTo(db.fn.now());
       table.primary("id");
-      table.foreign("user_id").references("user.id");
+      table
+        .foreign("user_id")
+        .references("user.id")
+        .onUpdate("CASCADE") // If Article PK is changed, update FK as well.
+        .onDelete("CASCADE"); // If Article is deleted, delete Comment as well.
     });
   }
 });
