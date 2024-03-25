@@ -251,6 +251,87 @@ INSERT INTO code_question (id, title, exam_id, user_id, created_at, updated_at) 
     'f47ac10b-58cc-4372-a567-0e02b2c3d479',
     now(),
     now()
+),
+(
+    -- random uuid
+    'f47ac10b-58cc-4372-a567-0e02b2c3d504',
+    'Question 1',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d489',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d480',
+    now(),
+    now()
+),
+(
+    -- random uuid
+    'f47ac10b-58cc-4372-a567-0e02b2c3d505',
+    'Question 2',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d489',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d480',
+    now(),
+    now()
+),
+(
+    -- random uuid
+    'f47ac10b-58cc-4372-a567-0e02b2c3d506',
+    'Question 3',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d489',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d480',
+    now(),
+    now()
+),
+(
+    -- random uuid
+    'f47ac10b-58cc-4372-a567-0e02b2c3d507',
+    'Question 1',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d490',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d480',
+    now(),
+    now()
+),
+(
+    -- random uuid
+    'f47ac10b-58cc-4372-a567-0e02b2c3d508',
+    'Question 2',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d490',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d480',
+    now(),
+    now()
+),
+(
+    -- random uuid
+    'f47ac10b-58cc-4372-a567-0e02b2c3d509',
+    'Question 3',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d490',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d480',
+    now(),
+    now()
+),
+(
+    -- random uuid
+    'f47ac10b-58cc-4372-a567-0e02b2c3d510',
+    'Question 1',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d491',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d481',
+    now(),
+    now()
+),
+(
+    -- random uuid
+    'f47ac10b-58cc-4372-a567-0e02b2c3d511',
+    'Question 2',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d491',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d481',
+    now(),
+    now()
+),
+(
+    -- random uuid
+    'f47ac10b-58cc-4372-a567-0e02b2c3d512',
+    'Question 3',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d491',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d481',
+    now(),
+    now()
 );
 
 INSERT INTO code_submission (id, code_question_id, programming_language_name, source_code, user_id, created_at, updated_at) VALUES 

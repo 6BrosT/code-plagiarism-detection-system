@@ -25,19 +25,19 @@ const dolosReportModel = {
 
       for (let i = 0; i < comparedCodeQuestionIds.length; i++) {
         if (i === 0) {
-          query += `WHERE compared_code_question_ids LIKE '%${comparedCodeQuestionIds[i]}%' `;
+          query += `WHERE dolos_report.compared_code_question_ids LIKE '%${comparedCodeQuestionIds[i]}%' `;
         } else {
-          query += `AND compared_code_question_ids LIKE '%${comparedCodeQuestionIds[i]}%' `;
+          query += `AND dolos_report.compared_code_question_ids LIKE '%${comparedCodeQuestionIds[i]}%' `;
         }
       }
 
       query += `LIMIT 1`;
 
-      const result = await db.raw(query);
-      if (!result[0] || result[0].length === 0) {
+      const { rows } = await db.raw(query);
+      if (!rows[0]) {
         return null;
       }
-      return result[0][0];
+      return rows[0];
     } catch (error) {
       console.error(error);
       return null;

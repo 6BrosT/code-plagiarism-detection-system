@@ -4,6 +4,7 @@ import languages from "../constants/languages.js";
 import codeSubmissionModel from "../models/code_submission.model.js";
 import dolosReportModel from "../models/dolos_report.model.js";
 import userModel from "../models/user.model.js";
+import codeQuestionModel from "../models/code_question.model.js";
 
 const upsertDolosReportController = async (req) => {
   try {
@@ -51,8 +52,9 @@ const upsertDolosReportController = async (req) => {
 
     const codeSubmissions = [];
     for (const codeQuestionId of codeQuestionIds) {
-      const codeSubmissionsByCodeQuestion =
-        await codeSubmissionModel.findAllByCodeQuestionId(codeQuestionId);
+      const codeSubmissionsByCodeQuestion = await codeSubmissionModel.findAll({
+        code_question_id: codeQuestionId,
+      });
 
       if (!codeSubmissionsByCodeQuestion) {
         return {
@@ -87,7 +89,7 @@ const upsertDolosReportController = async (req) => {
           questionName: codeSubmissions[i].code_question_title,
           userId: codeSubmissions[i].user_id,
           orgUserId: codeSubmissions[i].org_user_id,
-          userName: codeSubmissions[i].user_fullname,
+          userFullName: codeSubmissions[i].user_fullname,
           programmingLanguage: codeSubmissions[i].programming_language_name,
           filename: filename,
           fullName: filename,
@@ -183,6 +185,7 @@ const upsertDolosReportController = async (req) => {
       });
 
       const resultTemplate = {
+        id: reportUUID,
         language: programmingLanguage,
         pairs: newPairs,
         createdAt: reportResult.createdAt,
@@ -261,28 +264,34 @@ const getDolosReportByIdController = async (req) => {
 const getAllDolosReportsController = async () => {
   try {
     const reports = await dolosReportModel.findAll();
-    if (!reports) {
-      return {
-        statusCode: 404,
-        status: "error",
-        message: "Reports not found",
-      };
-    }
 
-    const resultTemplate = reports.map((report) => {
-      const pairs = JSON.parse(report.pairs_json_content);
-      const programmingLanguage = {
-        name: report.programming_language_name,
-        extensions: JSON.parse(report.programming_language_extensions),
-      };
+    const resultTemplate = [];
 
-      return {
-        language: programmingLanguage,
-        pairs: pairs,
+    for (const report of reports) {
+      const comparedCodeQuestions = [];
+      for (const codeQuestionId of JSON.parse(
+        report.compared_code_question_ids
+      )) {
+        const codeQuestion = await codeQuestionModel.findById(codeQuestionId);
+        if (codeQuestion) {
+          comparedCodeQuestions.push({
+            id: codeQuestionId,
+            title: codeQuestion.title,
+          });
+        }
+      }
+
+      resultTemplate.push({
+        id: report.id,
+        comparedCodeQuestions,
+        language: {
+          name: report.programming_language_name,
+          extensions: JSON.parse(report.programming_language_extensions),
+        },
         createdAt: report.created_at,
         name: report.name,
-      };
-    });
+      });
+    }
 
     return {
       statusCode: 200,
@@ -307,9 +316,9 @@ const checkDolosReportWithCodeQuestionIdsExistController = async (req) => {
 
     if (!report) {
       return {
-        statusCode: 404,
-        status: "error",
-        message: "Report not found",
+        statusCode: 200,
+        status: "success",
+        data: null,
       };
     }
 

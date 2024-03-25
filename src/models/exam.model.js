@@ -1,14 +1,12 @@
-import generate from "./generic.model.js";
 import db from "../utils/db.js";
 
-const genericExamModel = generate("exam", "id");
-
 const examModel = {
-  ...genericExamModel,
-
-  findAllByOrgId: async (orgId) => {
+  findAll: async (filterAttributes) => {
     try {
-      const result = await db("exam").where("org_id", orgId);
+      const result = await db("exam")
+        .join("course", "exam.course_id", "course.id")
+        .select("exam.*", "course.name as course_name")
+        .where(filterAttributes);
       return result;
     } catch (error) {
       console.error(error);
