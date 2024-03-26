@@ -1,6 +1,6 @@
 # Express API Starter
 
-# Run PostgreSql Instance
+# Run PostgreSql Instance Using Docker
 1. `docker pull postgres`
 2. `docker run --name my-postgres -d -p 2345:5432 -e POSTGRES_PASSWORD=localdb postgres`
 3. `Go to src/db/db_structure_and_data.sql to get sql scripts`
