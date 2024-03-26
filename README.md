@@ -3,8 +3,9 @@
 # Run PostgreSql Instance Using Docker
 1. `docker pull postgres`
 2. `docker run --name my-postgres -d -p 2345:5432 -e POSTGRES_PASSWORD=localdb postgres`
-3. `Go to src/db/db_structure_and_data.sql to get sql scripts`
-4. `Run sql scripts on dbms (dbeaver, ...)`
+3. `Create a database with name dolos_demo`
+4. `Go to src/db/db_structure_and_data.sql to get sql scripts`
+5. `Run sql scripts on database dolos_demo on DBMS (Dbeaver, ...)`
 
 How to use this template:
 
