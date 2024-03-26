@@ -1,5 +1,9 @@
 # Express API Starter
 
+# Run PostgreSql Instance
+1. `docker pull postgres`
+2. `docker run --name my-postgres -d -p 2345:5432 -e POSTGRES_PASSWORD=localdb postgres`
+
 How to use this template:
 
 ```sh
