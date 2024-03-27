@@ -15,6 +15,7 @@ const codeSubmissionModel = {
           "code_submission.code_question_id"
         )
         .join("user", "user.id", "code_submission.user_id")
+        .join("exam", "exam.id", "code_question.exam_id")
         .select(
           "code_submission.id",
           "code_submission.code_question_id",
@@ -24,6 +25,8 @@ const codeSubmissionModel = {
           "code_submission.user_id",
           "user.name as user_fullname",
           "user.org_user_id as org_user_id",
+          "code_question.exam_id",
+          "exam.name as exam_name",
           "code_submission.created_at",
           "code_submission.updated_at"
         )

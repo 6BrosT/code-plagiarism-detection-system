@@ -56,14 +56,6 @@ const upsertDolosReportController = async (req) => {
         code_question_id: codeQuestionId,
       });
 
-      if (!codeSubmissionsByCodeQuestion) {
-        return {
-          statusCode: 500,
-          status: "error",
-          message: "Failed to fetch code submissions",
-        };
-      }
-
       for (const codeSubmission of codeSubmissionsByCodeQuestion) {
         codeSubmissions.push(codeSubmission);
       }
@@ -91,6 +83,8 @@ const upsertDolosReportController = async (req) => {
           orgUserId: codeSubmissions[i].org_user_id,
           userFullName: codeSubmissions[i].user_fullname,
           programmingLanguage: codeSubmissions[i].programming_language_name,
+          examId: codeSubmissions[i].exam_id,
+          examName: codeSubmissions[i].exam_name,
           filename: filename,
           fullName: filename,
           status: "",
